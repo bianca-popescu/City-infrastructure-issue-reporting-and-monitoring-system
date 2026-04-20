@@ -4,4 +4,4 @@ project(City_infrastructure_issue_reporting_and_monitoring_system C)
 set(CMAKE_C_STANDARD 11)
 
 add_executable(City_infrastructure_issue_reporting_and_monitoring_system
-        write_binary_file.c)
+        city_manager.c)
