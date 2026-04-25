@@ -7,6 +7,7 @@ int main(int argc, char **argv) {
     char *district = NULL;
 
     operation op = OP_NONE; // initializare operatie
+    int extra_value = 0;
 
     // optiuni argumente in linia de comanda
     static struct option long_options[] = {
@@ -71,13 +72,62 @@ int main(int argc, char **argv) {
         }
     }
 
-    if (!role || op == OP_NONE) {
-        printf("Usage: --role <role> --user <user> [--add|--list] <district>\n");
+    if (!role || op == OP_NONE || !district) {
+        printf("usage error");
         return 1;
     }
 
-    if (op == OP_ADD) add(district, user, role);
-    else if (op == OP_LIST) list(district, role);
+    // nu avem parametru --user
+    if (user == NULL) {
+        user = "unknown";
+    }
+
+    switch (op) {
+
+        case OP_ADD:
+            add(district, user, role);
+            break;
+
+        case OP_LIST:
+            list(district, role);
+            break;
+
+        case OP_VIEW:
+            if (optind < argc) {
+
+                extra_value = atoi(argv[optind]); // ID de cautat
+                view(district, extra_value, role);
+            }
+            else {
+                printf("no ID provided\n");
+            }
+            break;
+
+        case OP_REMOVE:
+            if (optind < argc) {
+
+                extra_value = atoi(argv[optind]);
+                remove_report(district, extra_value, role);
+            }
+            else {
+                printf("no ID provided\n");
+            }
+            break;
+
+        case OP_THRESHOLD:
+
+            if (optind < argc) {
+
+                extra_value = atoi(argv[optind]);
+                update_threshold(district, extra_value, role);
+            }
+            else {
+                printf("no value provided\n");
+            }
+
+        default:
+            printf("invalid operation");
+    }
 
     return 0;
 }
