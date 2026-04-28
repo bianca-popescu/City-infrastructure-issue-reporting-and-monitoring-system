@@ -57,7 +57,9 @@ void new_report(report *r) {
     printf("new report: \n");
 
     printf("report ID: ");
-    scanf("%d", &(r->ID));
+    if (scanf("%d", &(r->ID))  != 1) {
+        while (getchar() != '\n');
+    }
 
     printf("GPS coordinates: ");
     scanf("%f %f", &(r->GPS.latitude), &(r->GPS.longitude));
@@ -152,7 +154,7 @@ void list(const char *district, const char *role) {
     // verifica daca exista report-uri in district
     if (stat(path, &st_file) != 0) {
 
-        printf("district %s has no reports\n");
+        printf("district %s has no reports\n", district);
         return;
     }
 
@@ -331,3 +333,110 @@ void update_threshold(const char *district, int new_threshold, const char *role)
 
     printf("new threshold for %s : %d\n", district, new_threshold);
 }
+
+// returneaza 1 daca este reusita impartirea string-ului field:operator:value in 3 parti, 0 in caz contrar
+int parse_condition(const char *input, char *field, char *op, char *value) {
+
+    if (input == NULL) {
+
+        return 0;
+    }
+
+    int items = sscanf(input, "%[^:]:%[^:]:%s", field, op, value);
+
+    return (items == 3);
+}
+
+// returneaza 1 daca reportul satisfaca conditia, 0 in caz contrar
+int match_condition(report *r, const char *field, const char *op, const char *value) {
+
+    if (strcmp(field, "severity") == 0) {
+
+        int val = atoi(value);
+
+        if (strcmp(op, "==") == 0) return r->severity_level == val;
+        if (strcmp(op, "!=") == 0) return r->severity_level != val;
+        if (strcmp(op, "<")  == 0) return r->severity_level < val;
+        if (strcmp(op, "<=") == 0) return r->severity_level <= val;
+        if (strcmp(op, ">")  == 0) return r->severity_level > val;
+        if (strcmp(op, ">=") == 0) return r->severity_level >= val;
+    }
+
+    else if (strcmp(field, "category") == 0) {
+
+        int cmp = strcmp(r->issue_category, value);
+
+        if (strcmp(op, "==") == 0) return cmp == 0;
+        if (strcmp(op, "!=") == 0) return cmp != 0;
+        if (strcmp(op, "<")  == 0) return cmp < 0;
+        if (strcmp(op, "<=") == 0) return cmp <= 0;
+        if (strcmp(op, ">")  == 0) return cmp > 0;
+        if (strcmp(op, ">=") == 0) return cmp >= 0;
+    }
+
+    if (strcmp(field, "inspector") == 0) {
+
+        int cmp = strcmp(r->inspector_name, value);
+
+        if (strcmp(op, "==") == 0) return cmp == 0;
+        if (strcmp(op, "!=") == 0) return cmp != 0;
+        if (strcmp(op, "<")  == 0) return cmp < 0;
+        if (strcmp(op, "<=") == 0) return cmp <= 0;
+        if (strcmp(op, ">")  == 0) return cmp > 0;
+        if (strcmp(op, ">=") == 0) return cmp >= 0;
+    }
+
+    if (strcmp(field, "timestamp") == 0) {
+
+        long val = atol(value);
+
+        if (strcmp(op, "==") == 0) return r->timestamp == val;
+        if (strcmp(op, "!=") == 0) return r->timestamp != val;
+        if (strcmp(op, "<")  == 0) return r->timestamp < val;
+        if (strcmp(op, "<=") == 0) return r->timestamp <= val;
+        if (strcmp(op, ">")  == 0) return r->timestamp > val;
+        if (strcmp(op, ">=") == 0) return r->timestamp >= val;
+    }
+
+    return 0;
+
+}
+
+void filter(const char *district, const char *role, int argc, char **argv, int start_index) {
+
+    char path[MAX_LENGTH];
+    snprintf(path, MAX_LENGTH, "%s/reports.dat", district);
+
+    int file_descriptor = open(path, O_RDONLY);
+    if (file_descriptor < 0) {
+
+        perror("open failed\n");
+        return;
+    }
+
+    report r;
+
+    while (read(file_descriptor, &r, sizeof(report)) == sizeof(report)) {
+
+        int match = 1;
+        for (int i = start_index; i < argc; i++) {
+
+            char field[MAX_LENGTH], operation[MAX_LENGTH], value[MAX_LENGTH];
+
+            if (parse_condition(argv[i], field, operation, value)) {
+                if (!match_condition(&r, field, operation, value)) {
+                    match = 0; // o conditie nu este indeplinita
+                    break;
+                }
+            }
+        }
+
+        if (match) {
+            printf("filter match: \n");
+            print_report_details(r);
+        }
+    }
+
+    close(file_descriptor);
+}
+

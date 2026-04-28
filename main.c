@@ -125,6 +125,16 @@ int main(int argc, char **argv) {
                 printf("no value provided\n");
             }
 
+        case OP_FILTER:
+
+            if (optind < argc) {
+
+                filter(district, role, argc, argv, optind);
+            } else {
+                printf("no condition provided\n");
+            }
+            break;
+
         default:
             printf("invalid operation");
     }

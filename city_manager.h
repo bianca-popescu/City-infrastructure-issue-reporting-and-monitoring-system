@@ -11,7 +11,7 @@
 #include <getopt.h>
 #include <sys/stat.h>
 
-#define MAX_LENGTH 256
+#define MAX_LENGTH 512
 
 // structuri de date
 typedef struct {
@@ -33,7 +33,7 @@ typedef enum {
     OP_NONE, OP_ADD, OP_LIST, OP_VIEW, OP_REMOVE, OP_THRESHOLD, OP_FILTER
 } operation;
 
-// functii
+// phase 1
 int check_access(const char *path, const char *role, int requested_bit);
 void get_permissions_string(mode_t mode, char *str);
 void new_report(report *r);
@@ -43,5 +43,11 @@ void print_report_details(report r);
 void view(const char *district, int id, const char *role);
 void remove_report(const char *district, int id, const char *role);
 void update_threshold(const char *district, int new_threshold, const char *role);
+int parse_condition(const char *input, char *field, char *op, char *value);
+int match_condition(report *r, const char *field, const char *op, const char *value);
+void filter (const char *district, const char *role, int argc, char **argv, int start_index);
+
+// phase 2
+void remove_district (const char *district);
 
 #endif
