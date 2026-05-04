@@ -1,5 +1,5 @@
 #include "city_manager.h"
-
+// phase 1
 // verifica daca rolul are permisiunile necesare
 int check_access(const char *path, const char *role, int requested_bit) {
 
@@ -440,3 +440,57 @@ void filter(const char *district, const char *role, int argc, char **argv, int s
     close(file_descriptor);
 }
 
+// phase 2
+void remove_district(const char *district, const char *role) {
+
+    if (strcmp(role, "manager") != 0) {
+
+        printf("acces denied: role %s can't remove districts\n");
+        return;
+    }
+
+    // stergere symlink
+    char link_name[MAX_LENGTH];
+    snprintf(link_name, MAX_LENGTH, "active_reports-%s", district);
+
+    if (unlink(link_name) == 0) {
+        printf("symlink %s removed\n", link_name);
+    }
+    else {
+        perror("removing symlink failed");
+    }
+
+    // child process
+    pid_t pid = fork();
+
+    if (pid < 0) {
+
+        perror("fork failed");
+        return;
+    }
+
+    if (pid == 0) {
+
+        execlp("rm", "rm", "-rf", district, (char*)NULL);
+
+        perror("exec failed\n");
+        exit(1);
+    }
+    else {
+
+        int status;
+        wait(&status);
+
+        // WIFEXITED -  returns true if the child terminated normally.
+        // WEXITSTATUS -  returns the exit status of the child. This macro should be employed only if WIFEXITED returned true.
+        if (WIFEXITED(status) && WEXITSTATUS(status) == 0) {
+
+            printf("directory %s deleteted successfully\n", district);
+        }
+        else {
+
+            printf("rm failed\n");
+        }
+
+    }
+}

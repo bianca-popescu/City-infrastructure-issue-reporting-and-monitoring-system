@@ -10,6 +10,7 @@
 #include <string.h>
 #include <getopt.h>
 #include <sys/stat.h>
+#include<sys/wait.h>
 
 #define MAX_LENGTH 512
 
@@ -30,7 +31,7 @@ typedef struct {
 } report;
 
 typedef enum {
-    OP_NONE, OP_ADD, OP_LIST, OP_VIEW, OP_REMOVE, OP_THRESHOLD, OP_FILTER
+    OP_NONE, OP_ADD, OP_LIST, OP_VIEW, OP_REMOVE, OP_THRESHOLD, OP_FILTER, OP_REMOVE_DISTRICT
 } operation;
 
 // phase 1
@@ -48,6 +49,6 @@ int match_condition(report *r, const char *field, const char *op, const char *va
 void filter (const char *district, const char *role, int argc, char **argv, int start_index);
 
 // phase 2
-void remove_district (const char *district);
+void remove_district (const char *district, const char *role);
 
 #endif

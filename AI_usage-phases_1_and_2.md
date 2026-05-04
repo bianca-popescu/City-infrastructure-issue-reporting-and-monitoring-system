@@ -1,5 +1,7 @@
 AI tool used: Gemini 3 Flash
 
+Phase 1:
+
 Purpose: assistance for binary file manipulation and command-line argument parsing
 
 Functions generated with AI assistance:
@@ -11,15 +13,8 @@ Functions generated with AI assistance:
 Modifications/ debugging:
     struct fields: I mapped the AI's generic field names to my specific ones
     type correction: I corrected an AI suggestion in snprintf function for the integer threshold from %s to %d
+    misinterpretation of relational operators:  when passing filter conditions like "severity:>=>2" (without the quotation marks), the terminal shell interprets the 
+    < and > characters incorrectly, as input/output redirection operators rather than as a string for the program. 
+    To be able to pass the string as intended, I wrapped the condition in quotes.
 
-Problems encountered:
-    interpretation of relational operators: when passing filter conditions like "severity:>=>2", the terminal shell interprets the < and > characters
-incorrectly, as input/output redirection operators rather than as a string for the program. To be able to pass the string as intended, I wrapped the 
-condition in quotes.
-
-intent: ./city_manager --filter district1 severity:>=:2
-action: Executes ./city_manager --filter district1 severity: and redirects the result into a file named =:2
-correct usage: ./city_manager --filter district1 "severity:>=:2"
-
-Learning outcomes (from using AI):
-    better understanding of binary file navigation with lseek and physically resizing files with ftruncate, permission bits usage and conditions
+Phase 2:

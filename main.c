@@ -20,6 +20,7 @@ int main(int argc, char **argv) {
         {"remove_report", required_argument, 0, 'd'},
         {"update_threshold", required_argument, 0, 't'},
         {"filter", required_argument, 0, 'f'},
+        {"remove_district", required_argument, 0, 'R'},
 
         {0,0,0,0}
     };
@@ -28,7 +29,7 @@ int main(int argc, char **argv) {
     int option_index = 0;
 
     // getopt_long accepta optiuni care incep cu --
-    while ((option = getopt_long(argc, argv, "r:u:a:l:v:d:t:f:", long_options, &option_index)) != -1) {
+    while ((option = getopt_long(argc, argv, "r:u:a:l:v:d:t:f:R:", long_options, &option_index)) != -1) {
 
         switch (option) {
             case 'r':
@@ -66,7 +67,13 @@ int main(int argc, char **argv) {
 
             case 'f':
                 op = OP_FILTER;
-                district = optarg; break;
+                district = optarg;
+                break;
+
+            case 'R':
+                op = OP_REMOVE_DISTRICT;
+                district = optarg;
+                break;
 
             default: exit(1);
         }
@@ -133,6 +140,10 @@ int main(int argc, char **argv) {
             } else {
                 printf("no condition provided\n");
             }
+            break;
+
+        case OP_REMOVE_DISTRICT:
+            remove_district(district, role);
             break;
 
         default:
