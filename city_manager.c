@@ -488,9 +488,7 @@ void remove_district(const char *district, const char *role) {
             printf("directory %s deleteted successfully\n", district);
         }
         else {
-
             printf("rm failed\n");
         }
-
     }
 }

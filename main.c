@@ -80,12 +80,14 @@ int main(int argc, char **argv) {
     }
 
     if (!role || op == OP_NONE || !district) {
+
         printf("usage error");
         return 1;
     }
 
     // nu avem parametru --user
     if (user == NULL) {
+
         user = "unknown";
     }
 
