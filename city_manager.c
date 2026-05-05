@@ -79,7 +79,6 @@ void new_report(report *r) {
 
 // operatii
 void add(const char *district, const char *user_name, const char *role) {
-
     char path[MAX_LENGTH];
     snprintf(path, MAX_LENGTH, "%s/reports.dat", district);
 
@@ -121,6 +120,53 @@ void add(const char *district, const char *user_name, const char *role) {
 
     printf("report %d added to %s\n", r.ID, district);
 
+    // phase 2
+    int monitor_fd = open(".monitor_pid", O_RDONLY);
+
+    char log_message[MAX_LENGTH];
+
+    if (monitor_fd >= 0) {
+
+        char pid_buffer[16];
+        memset(pid_buffer, 0, 16);
+        read(monitor_fd, pid_buffer, 15);
+
+        close(monitor_fd);
+
+        pid_t monitor_pid = atoi(pid_buffer);
+
+        // trimitere semnal
+        if (kill(monitor_pid, SIGUSR1) == 0) {
+            snprintf(log_message, MAX_LENGTH, "monitor pid %d notified via SIGUSR1\n");
+        }
+        else {
+            snprintf(log_message, MAX_LENGTH, "monitor found, signal failed\n");
+        }
+    }
+    else {
+        snprintf(log_message, MAX_LENGTH, ".monitor_pid file missing\n");
+    }
+
+    // district log
+    char log_path[MAX_LENGTH];
+    snprintf(log_path, MAX_LENGTH, "%s/district/log", district);
+
+    int log_fd = open(log_path, O_WRONLY | O_CREAT | O_APPEND, 0644);
+
+    if (log_fd >= 0) {
+
+        // timestamp (log message)
+        time_t now = time(NULL);
+        char *t_string = ctime(&now);
+        t_string[strlen(t_string) - 1] = 0;
+
+        char entry[MAX_LENGTH * 2];
+        snprintf(entry, sizeof(entry), "[%s] user %s added report %d: %s\n",
+                 t_string, user_name, r.ID, log_message);
+
+        write(log_fd, entry, strlen(entry));
+        close(log_fd);
+    }
 }
 
 void list(const char *district, const char *role) {
