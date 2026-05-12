@@ -32,6 +32,19 @@ void handle_signal(int sig) {
 
 int main() {
 
+    // verificam daca exista alt monitor in executie inainte de a crea fisierul
+    int old_file_descriptor = open(".monitor_pid", O_RDONLY);
+
+    if (old_file_descriptor >= 0) {
+
+        char old_pid[16] = {0};
+        read(old_file_descriptor, old_pid, 15);
+        close(old_file_descriptor);
+
+        printf("monitor already running with PID %S\n", old_pid);
+        exit(1);
+    }
+
     // creare/ overwrite .monitor_pid
     int file_descriptor = open(".monitor_pid", O_WRONLY | O_CREAT | O_TRUNC, 0644);
 
