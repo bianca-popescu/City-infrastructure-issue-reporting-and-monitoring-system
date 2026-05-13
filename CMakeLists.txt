@@ -8,4 +8,5 @@ add_executable(City_infrastructure_issue_reporting_and_monitoring_system
         city_manager.h
         main.c
         monitor_reports.c
-        city_hub.c)
+        city_hub.c
+        scorer.c)
