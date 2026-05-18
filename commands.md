@@ -1,4 +1,7 @@
-gcc -o city_manager main.c city_manager.c
+// compile
+gcc -Wall -o city_manager main.c city_manager.c
+gcc -Wall -o scorer scorer.c
+gcc -Wall -o monitor_reports monitor_reports.c
 
 // phase 1
 ./city_manager --role manager --user bianca --add district1
@@ -40,3 +43,5 @@ acces denied: role manager can't remove districts
 ./city_manager --role manager --remove_district district1
 symlink district1 removed
 directory district1 deleteted successfully
+
+// phase 3

@@ -41,7 +41,7 @@ int main() {
         read(old_file_descriptor, old_pid, 15);
         close(old_file_descriptor);
 
-        printf("monitor already running with PID %S\n", old_pid);
+        printf("monitor already running with PID %s\n", old_pid);
         exit(1);
     }
 

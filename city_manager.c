@@ -137,7 +137,7 @@ void add(const char *district, const char *user_name, const char *role) {
 
         // trimitere semnal
         if (kill(monitor_pid, SIGUSR1) == 0) {
-            snprintf(log_message, MAX_LENGTH, "monitor pid %d notified via SIGUSR1\n");
+            snprintf(log_message, MAX_LENGTH, "monitor pid\n");
         }
         else {
             snprintf(log_message, MAX_LENGTH, "monitor found, signal failed\n");
@@ -491,7 +491,7 @@ void remove_district(const char *district, const char *role) {
 
     if (strcmp(role, "manager") != 0) {
 
-        printf("acces denied: role %s can't remove districts\n");
+        printf("acces denied: role %s can't remove districts\n", role);
         return;
     }
 

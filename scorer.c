@@ -33,7 +33,7 @@ int main(int argc, char **argv) {
     char *district = argv[1];
     char path[MAX_LENGTH];
 
-    snprintf(path, MAX_LENGTH, "%s/reports.dat", argv[1]);
+    snprintf(path, MAX_LENGTH, "%s/reports.dat", district);
 
     int file_descriptor = open(path, O_RDONLY);
 
